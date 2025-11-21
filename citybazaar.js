@@ -657,6 +657,8 @@ function checkLoginStatus() {
   }
 }
 
+const BASE_URL = "https://citybazzar.onrender.com";
+
 // Handle Signup
 async function handleSignup(event) {
   event.preventDefault();
@@ -664,25 +666,25 @@ async function handleSignup(event) {
   const username = document.getElementById("signupUsername").value;
   const email = document.getElementById("signupEmail").value;
   const password = document.getElementById("signupPassword").value;
-  const confirmPassword = document.getElementById(
-    "signupConfirmPassword"
-  ).value;
+  const confirmPassword = document.getElementById("signupConfirmPassword").value;
+
+  if (password !== confirmPassword) {
+    alert("Passwords do not match!");
+    return;
+  }
 
   try {
-    const res = await fetch("http://localhost:5000/signup", {
+    const res = await fetch(`${BASE_URL}/signup`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, email, password, confirmPassword }),
+      body: JSON.stringify({ username, email, password }),
     });
 
     const data = await res.json();
     alert(data.message);
 
     if (res.ok) {
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("username", data.username);
       toggleSignupModal();
-      checkLoginStatus();
     }
   } catch (err) {
     console.error(err);
@@ -698,7 +700,7 @@ async function handleLogin(event) {
   const password = document.getElementById("loginPassword").value;
 
   try {
-    const res = await fetch("http://localhost:5000/login", {
+    const res = await fetch(`${BASE_URL}/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
@@ -710,6 +712,7 @@ async function handleLogin(event) {
     if (res.ok) {
       localStorage.setItem("token", data.token);
       localStorage.setItem("username", data.user.username);
+
       toggleLoginModal();
       checkLoginStatus();
     }
@@ -725,3 +728,4 @@ function logoutUser() {
   localStorage.removeItem("username");
   location.reload();
 }
+

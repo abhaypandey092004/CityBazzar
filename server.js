@@ -5,6 +5,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const cors = require("cors");
 const dotenv = require("dotenv");
+const path = require("path");
 
 dotenv.config();
 const app = express();
@@ -12,6 +13,14 @@ const app = express();
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+// Serve static frontend files (HTML, CSS, JS)
+app.use(express.static(path.join(__dirname)));
+
+// Root Route → Serve your main HTML file
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "citybazaar.html"));
+});
 
 // Connect MongoDB
 mongoose
@@ -118,6 +127,4 @@ app.get("/profile", async (req, res) => {
 // Start server
 // ---------------------------
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log("Server running on PORT " + PORT));
-
-
+app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));

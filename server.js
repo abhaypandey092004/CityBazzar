@@ -5,30 +5,37 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const cors = require("cors");
 const dotenv = require("dotenv");
-const path = require("path");
 
 dotenv.config();
 const app = express();
 
-// Middleware
-app.use(cors());
+// -------------------------
+// CORS FIX FOR RENDER + FRONTEND
+// -------------------------
+app.use(
+  cors({
+    origin: "*", // allow all for now
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
+
 app.use(express.json());
 
-// Serve static frontend files (HTML, CSS, JS)
-app.use(express.static(path.join(__dirname)));
-
-// Root Route → Serve your main HTML file
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "citybazaar.html"));
-});
-
-// Connect MongoDB
+// -------------------------
+// MongoDB Connection
+// -------------------------
 mongoose
-  .connect(process.env.MONGO_URI)
+  .connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
   .then(() => console.log("✅ MongoDB Connected"))
   .catch((err) => console.error("❌ MongoDB connection error:", err));
 
+// -------------------------
 // User Schema
+// -------------------------
 const userSchema = new mongoose.Schema({
   username: { type: String, required: true },
   email: { type: String, unique: true, required: true },
@@ -37,9 +44,16 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model("User", userSchema);
 
-// ---------------------------
+// -------------------------
+// Root Route (Fix Cannot GET /)
+// -------------------------
+app.get("/", (req, res) => {
+  res.send("🚀 CityBazzar Backend is Running!");
+});
+
+// -------------------------
 // Signup API
-// ---------------------------
+// -------------------------
 app.post("/signup", async (req, res) => {
   try {
     const { username, email, password } = req.body;
@@ -63,9 +77,9 @@ app.post("/signup", async (req, res) => {
   }
 });
 
-// ---------------------------
+// -------------------------
 // Login API
-// ---------------------------
+// -------------------------
 app.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -77,12 +91,12 @@ app.post("/login", async (req, res) => {
     if (!user) return res.status(400).json({ message: "User not found!" });
 
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(400).json({ message: "Invalid password!" });
+    if (!isMatch)
+      return res.status(400).json({ message: "Invalid password!" });
 
-    // Generate JWT token
     const token = jwt.sign(
       { id: user._id, email: user.email },
-      process.env.JWT_SECRET || "secret123",
+      process.env.JWT_SECRET || "secret_key_123",
       { expiresIn: "1d" }
     );
 
@@ -101,9 +115,9 @@ app.post("/login", async (req, res) => {
   }
 });
 
-// ---------------------------
-// Protected Route (example)
-// ---------------------------
+// -------------------------
+// Protected Profile Route
+// -------------------------
 app.get("/profile", async (req, res) => {
   try {
     const authHeader = req.headers.authorization;
@@ -111,7 +125,10 @@ app.get("/profile", async (req, res) => {
       return res.status(401).json({ message: "No token provided." });
 
     const token = authHeader.split(" ")[1];
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || "secret123");
+    const decoded = jwt.verify(
+      token,
+      process.env.JWT_SECRET || "secret_key_123"
+    );
 
     const user = await User.findById(decoded.id).select("-password");
     if (!user) return res.status(404).json({ message: "User not found." });
@@ -123,8 +140,8 @@ app.get("/profile", async (req, res) => {
   }
 });
 
-// ---------------------------
-// Start server
-// ---------------------------
+// -------------------------
+// Start Server
+// -------------------------
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));

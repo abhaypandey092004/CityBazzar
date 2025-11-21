@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>City Bazaar - Your Digital Shopping Destination</title>
+    <link rel="stylesheet" href="citybazaar.css" />
+  </head>
+  <body>
+    <header>
+      <div class="container">
+        <div class="header-content">
+          <a href="#" class="logo">City Bazaar</a>
+          <nav class="main-nav">
+            <a href="#">Home</a>
+            <a href="#" onclick="toggleServicesModal()">Services</a>
+            <a href="#" onclick="toggleAboutModal()">About</a>
+            <a href="#" onclick="toggleContactModal()">Contact</a>
+            <a href="#" onclick="toggleAccountModal()">Account</a>
+          </nav>
+          <div class="header-actions">
+            <div class="search-box">
+              <input
+                type="text"
+                id="searchInput"
+                placeholder="Search products..."
+              />
+              <span>🔍</span>
+            </div>
+            <div class="auth-buttons" id="authButtons">
+              <a href="#" class="btn" onclick="toggleLoginModal()">Login</a>
+              <a href="#" class="btn" onclick="toggleSignupModal()">Sign Up</a>
+            </div>
+            <div class="user-info hidden" id="userInfo">
+              <span id="welcomeUser"></span>
+              <button class="btn logout-btn" onclick="logoutUser()">
+                Logout
+              </button>
+            </div>
+            <button class="cart-btn" onclick="toggleCart()">
+              🛒 Cart
+              <span class="cart-count" id="cartCount">0</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <div class="container">
+        <section class="hero">
+          <h1>Welcome to City Bazaar</h1>
+          <p>Discover amazing products at unbeatable prices</p>
+        </section>
+
+        <section class="products-section">
+          <h2 class="section-title">Our Products</h2>
+
+          <div class="category-filters">
+            <button
+              class="filter-btn active"
+              onclick="filterProducts('all', event)"
+            >
+              All
+            </button>
+            <button
+              class="filter-btn"
+              onclick="filterProducts('electronics', event)"
+            >
+              Electronics
+            </button>
+            <button
+              class="filter-btn"
+              onclick="filterProducts('clothing', event)"
+            >
+              Clothing
+            </button>
+            <button class="filter-btn" onclick="filterProducts('books', event)">
+              Books
+            </button>
+            <button
+              class="filter-btn"
+              onclick="filterProducts('home_decor', event)"
+            >
+              Home Decor
+            </button>
+            <button
+              class="filter-btn"
+              onclick="filterProducts('sports', event)"
+            >
+              Sports
+            </button>
+            <button
+              class="filter-btn"
+              onclick="filterProducts('kitchen', event)"
+            >
+              Kitchen
+            </button>
+            <button class="filter-btn" onclick="filterProducts('toys', event)">
+              Toys
+            </button>
+            <button
+              class="filter-btn"
+              onclick="filterProducts('health_beauty', event)"
+            >
+              Health & Beauty
+            </button>
+          </div>
+
+          <div class="products-grid" id="productsGrid">
+            <!-- Products will be loaded here -->
+          </div>
+          <p
+            id="outOfStockMessage"
+            style="
+              display: none;
+              text-align: center;
+              font-size: 22px;
+              color: red;
+              margin-top: 20px;
+            "
+          >
+            ❌ Items in this category are currently OUT OF STOCK
+          </p>
+        </section>
+
+        <section class="payment-section">
+          <h2 class="section-title">Accepted Payment Methods</h2>
+          <div class="payment-methods-grid">
+            <div class="payment-method-card">
+              <img
+                src="https://upload.wikimedia.org/wikipedia/commons/4/41/Visa_Logo.png"
+                alt="Visa"
+              />
+
+              <p>Visa</p>
+            </div>
+            <div class="payment-method-card">
+              <img
+                src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/MasterCard_Logo.svg/1200px-MasterCard_Logo.svg.png"
+                alt="MasterCard"
+              />
+              <p>MasterCard</p>
+            </div>
+            <div class="payment-method-card">
+              <img
+                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcThDlyINMziYyHU7G__YQ7yFCLkH8GE7GeryQ&s"
+              />
+
+              <p>Apple Pay</p>
+            </div>
+            <div class="payment-method-card">
+              <img
+                src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Google_Pay_Logo.svg/1280px-Google_Pay_Logo.svg.png"
+              />
+
+              <p>Google Pay</p>
+            </div>
+            <div class="payment-method-card">
+              <img
+                src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg"
+                alt="PayPal"
+              />
+
+              <p>PayPal</p>
+            </div>
+            <div class="payment-method-card">
+              <img
+                src="https://download.logo.wine/logo/Amazon_Pay/Amazon_Pay-Logo.wine.png"
+                alt="Amazon Pay"
+              />
+
+              <p>Amazon Pay</p>
+            </div>
+            <div class="payment-method-card">
+              <img
+                src="https://upload.wikimedia.org/wikipedia/commons/e/e1/UPI-Logo-vector.svg"
+                alt="UPI"
+              />
+
+              <p>UPI</p>
+            </div>
+            <div class="payment-method-card">
+              <img
+                src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/RuPay.svg/2560px-RuPay.svg.png"
+                alt="RuPay"
+              />
+
+              <p>RuPay</p>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- Cart Modal -->
+    <div class="modal" id="cartModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title">Shopping Cart</h2>
+          <button class="close-btn" onclick="toggleCart()">&times;</button>
+        </div>
+        <div id="cartItems">
+          <!-- Cart items will be loaded here -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Product Specification Modal -->
+    <div class="modal" id="productSpecModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title" id="productSpecTitle">Product Details</h2>
+          <button class="close-btn" onclick="toggleProductSpecModal()">
+            &times;
+          </button>
+        </div>
+        <div class="product-spec-content" id="productSpecDetails">
+          <!-- Product details will be loaded here -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div class="modal" id="loginModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title">Login</h2>
+          <button class="close-btn" onclick="toggleLoginModal()">
+            &times;
+          </button>
+        </div>
+        <form class="auth-form" onsubmit="handleLogin(event)">
+          <label for="loginEmail">Email:</label>
+          <input
+            type="email"
+            id="loginEmail"
+            placeholder="Enter your email"
+            required
+          />
+          <label for="loginPassword">Password:</label>
+          <input
+            type="password"
+            id="loginPassword"
+            placeholder="Enter your password"
+            required
+          />
+          <button type="submit">Login</button>
+          <div class="switch-auth">
+            Don't have an account?
+            <a
+              href="#"
+              onclick="toggleLoginModal(); toggleSignupModal(); return false;"
+              >Sign Up</a
+            >
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Sign Up Modal -->
+    <div class="modal" id="signupModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title">Sign Up</h2>
+          <button class="close-btn" onclick="toggleSignupModal()">
+            &times;
+          </button>
+        </div>
+        <form class="auth-form" onsubmit="handleSignup(event)">
+          <label for="signupUsername">Username:</label>
+          <input
+            type="text"
+            id="signupUsername"
+            placeholder="Choose a username"
+            required
+          />
+          <label for="signupEmail">Email:</label>
+          <input
+            type="email"
+            id="signupEmail"
+            placeholder="Enter your email"
+            required
+          />
+          <label for="signupPassword">Password:</label>
+          <input
+            type="password"
+            id="signupPassword"
+            placeholder="Create a password"
+            required
+          />
+          <label for="signupConfirmPassword">Confirm Password:</label>
+          <input
+            type="password"
+            id="signupConfirmPassword"
+            placeholder="Confirm your password"
+            required
+          />
+          <button type="submit">Sign Up</button>
+          <div class="switch-auth">
+            Already have an account?
+            <a
+              href="#"
+              onclick="toggleSignupModal(); toggleLoginModal(); return false;"
+              >Login</a
+            >
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Services Modal -->
+    <div class="modal" id="servicesModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title">Our Services</h2>
+          <button class="close-btn" onclick="toggleServicesModal()">
+            &times;
+          </button>
+        </div>
+        <div class="modal-body">
+          <h3>Fast & Reliable Delivery</h3>
+          <p>
+            We partner with leading logistics providers to ensure your orders
+            reach you quickly and safely. Enjoy expedited shipping options and
+            real-time tracking for all your purchases.
+          </p>
+          <br />
+          <h3>Secure Payment Gateways</h3>
+          <p>
+            Shop with confidence using our encrypted and secure payment methods.
+            We accept all major credit/debit cards, net banking, UPI, and
+            popular digital wallets, ensuring your financial data is always
+            protected.
+          </p>
+          <br />
+          <h3>24/7 Customer Support</h3>
+          <p>
+            Our dedicated customer service team is available around the clock to
+            assist you with any queries, concerns, or feedback. Reach out via
+            live chat, email, or phone for prompt and friendly assistance.
+          </p>
+          <br />
+          <h3>Easy Returns & Refunds</h3>
+          <p>
+            Not satisfied with your purchase? Our hassle-free return policy
+            allows you to return products within a specified period for a full
+            refund or exchange. Your satisfaction is our priority.
+          </p>
+          <br />
+          <h3>Personalized Shopping Experience</h3>
+          <p>
+            Get tailored product recommendations based on your browsing history
+            and preferences. Our smart algorithms help you discover new items
+            you'll love, making your shopping journey more enjoyable.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- About Modal -->
+    <div class="modal" id="aboutModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title">About City Bazaar</h2>
+          <button class="close-btn" onclick="toggleAboutModal()">
+            &times;
+          </button>
+        </div>
+        <div class="modal-body">
+          <h3>Our Story</h3>
+          <p>
+            City Bazaar was founded in 2023 with a vision to create a seamless
+            and enjoyable online shopping experience for everyone. We started as
+            a small team with a big dream: to connect customers with a diverse
+            range of high-quality products at competitive prices, all from the
+            comfort of their homes.
+          </p>
+          <br />
+          <h3>Our Mission</h3>
+          <p>
+            To be the most customer-centric online marketplace, where people can
+            discover and buy anything they need or want. We strive to offer an
+            unparalleled selection, exceptional value, and world-class customer
+            service.
+          </p>
+          <br />
+          <h3>Our Values</h3>
+          <ul>
+            <li>
+              <strong>Customer First:</strong> Your satisfaction drives
+              everything we do.
+            </li>
+            <li>
+              <strong>Integrity:</strong> We operate with honesty and
+              transparency.
+            </li>
+            <li>
+              <strong>Innovation:</strong> Constantly seeking new ways to
+              improve your shopping experience.
+            </li>
+            <li>
+              <strong>Community:</strong> Building a vibrant marketplace that
+              benefits both buyers and sellers.
+            </li>
+            <li>
+              <strong>Quality:</strong> Ensuring every product meets our high
+              standards.
+            </li>
+          </ul>
+          <br />
+          <h3>Meet the Team</h3>
+          <p>
+            We are a passionate group of individuals dedicated to making City
+            Bazaar your favorite shopping destination. From tech innovators to
+            customer support heroes, every member plays a crucial role in our
+            success.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contact Modal -->
+    <div class="modal" id="contactModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title">Contact Us</h2>
+          <button class="close-btn" onclick="toggleContactModal()">
+            &times;
+          </button>
+        </div>
+        <div class="modal-body">
+          <h3>Get in Touch</h3>
+          <p>
+            We'd love to hear from you! Whether you have a question, feedback,
+            or need assistance, our team is ready to help.
+          </p>
+          <br />
+          <h4>Customer Service:</h4>
+          <p><strong>Email:</strong> support@citybazaar.com</p>
+          <p><strong>Phone:</strong> +91-123-456-7890 (Available 24/7)</p>
+          <p>
+            <strong>Live Chat:</strong> Click the chat icon on the bottom right
+            of your screen.
+          </p>
+          <br />
+          <h4>Business Inquiries:</h4>
+          <p><strong>Email:</strong> business@citybazaar.com</p>
+          <br />
+          <h4>Our Address:</h4>
+          <p>City Bazaar Headquarters</p>
+          <p>123 Digital Street, Cyber City</p>
+          <p>Bengaluru, Karnataka 560001, India</p>
+          <br />
+          <form class="auth-form" onsubmit="handleContactForm(event)">
+            <label for="contactName">Your Name:</label>
+            <input
+              type="text"
+              id="contactName"
+              placeholder="Enter your name"
+              required
+            />
+            <label for="contactEmail">Your Email:</label>
+            <input
+              type="email"
+              id="contactEmail"
+              placeholder="Enter your email"
+              required
+            />
+            <label for="contactSubject">Subject:</label>
+            <input
+              type="text"
+              id="contactSubject"
+              placeholder="Subject of your inquiry"
+              required
+            />
+            <label for="contactMessage">Message:</label>
+            <textarea
+              id="contactMessage"
+              rows="5"
+              placeholder="Your message..."
+              required
+            ></textarea>
+            <button type="submit">Send Message</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Account Modal -->
+    <div class="modal" id="accountModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title">My Account</h2>
+          <button class="close-btn" onclick="toggleAccountModal()">
+            &times;
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>
+            Welcome to your City Bazaar account! Here you can manage your
+            profile, orders, and preferences.
+          </p>
+          <br />
+          <h3>Account Overview</h3>
+          <p>
+            <strong>Username:</strong> <span id="accountUsername">Guest</span>
+          </p>
+          <p>
+            <strong>Email:</strong>
+            <span id="accountEmail">guest@example.com</span>
+          </p>
+          <br />
+          <h3>Order History</h3>
+          <p>
+            View your past orders, track shipments, and reorder your favorite
+            products.
+          </p>
+          <button
+            class="btn"
+            style="
+              background: #3f51b5;
+              color: white;
+              border: none;
+              margin-top: 1rem;
+            "
+          >
+            View Orders
+          </button>
+          <br /><br />
+          <h3>Address Book</h3>
+          <p>Manage your shipping and billing addresses for faster checkout.</p>
+          <button
+            class="btn"
+            style="
+              background: #3f51b5;
+              color: white;
+              border: none;
+              margin-top: 1rem;
+            "
+          >
+            Manage Addresses
+          </button>
+          <br /><br />
+          <h3>Payment Methods</h3>
+          <p>Securely save and manage your payment options.</p>
+          <button
+            class="btn"
+            style="
+              background: #3f51b5;
+              color: white;
+              border: none;
+              margin-top: 1rem;
+            "
+          >
+            Manage Payments
+          </button>
+          <br /><br />
+          <h3>Settings</h3>
+          <p>
+            Update your personal information, password, and notification
+            preferences.
+          </p>
+          <button
+            class="btn"
+            style="
+              background: #3f51b5;
+              color: white;
+              border: none;
+              margin-top: 1rem;
+            "
+          >
+            Edit Profile
+          </button>
+          <br /><br />
+        </div>
+      </div>
+    </div>
+
+    <script src="citybazaar.js"></script>
+  </body>
+</html>
